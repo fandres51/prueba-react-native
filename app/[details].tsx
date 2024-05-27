@@ -1,9 +1,35 @@
+import React from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
+import { Product } from "@/models/product";
 
 export default function Details() {
 
-  const prod = useLocalSearchParams();
+  const prod: Product = useLocalSearchParams() as unknown as Product;
+
+  function deleteItem(id: string): void {
+    fetch(`http://10.0.2.2:3002/bp/products/${id}`, { method: 'DELETE' })
+      .then(res => console.log(res))
+      .catch(error => console.error(error))
+      .finally(() => {
+        router.navigate('/');
+      });
+  }
+
+  function goToEdit(): void {
+    router.push({
+      pathname: '/update',
+      params: {
+        id: prod.id,
+        name: prod.name,
+        description: prod.description,
+        logo: prod.logo,
+        date_release: String(prod.date_release),
+        date_revision: String(prod.date_revision)
+      }
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -26,22 +52,22 @@ export default function Details() {
         </View>
         <View style={styles.dataSegment}>
           <Text>Fecha de liberación:</Text>
-          <Text style={styles.data}>{prod.date_release}</Text>
+          <Text style={styles.data}>{String(prod.date_release)}</Text>
         </View>
         <View style={styles.dataSegment}>
           <Text>Fecha de revisión:</Text>
-          <Text style={styles.data}>{prod.date_revision}</Text>
+          <Text style={styles.data}>{String(prod.date_revision)}</Text>
         </View>
       </View>
       <View>
-        <TouchableOpacity>
-          <View style={styles.button}>
+        <TouchableOpacity onPress={()=>goToEdit()}>
+          <View style={[styles.button, { backgroundColor: '#e9ecf3' }]}>
             <Text>Editar</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
-          <View style={styles.button}>
-            <Text>Eliminar</Text>
+        <TouchableOpacity onPress={() => deleteItem(prod.id)}>
+          <View style={[styles.button, { backgroundColor: '#d50707' }]}>
+            <Text style={{ color: 'white' }}>Eliminar</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -78,12 +104,17 @@ const styles = StyleSheet.create({
     textAlign: "right"
   },
   button: {
-    borderWidth: 1,
-    borderRadius: 4,
+    borderRadius: 8,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
+    padding: 18,
     marginTop: 16,
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
 })

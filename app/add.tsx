@@ -2,6 +2,7 @@ import React from 'react';
 import Form from '../components/Form';
 import { View, StyleSheet } from 'react-native';
 import { Product } from '@/models/product';
+import { router } from 'expo-router';
 
 export default function Add() {
 
@@ -13,8 +14,12 @@ export default function Add() {
             },
             body: JSON.stringify(data)
         })
-            .then(res => console.log(res))
-            .catch(error => console.error(error));
+            .then(res => console.log('Data added'))
+            .catch(error => console.error(error))
+            .finally(()=>{
+                router.navigate('/');
+            })
+        // console.log(data);
     }
 
     return (

@@ -1,21 +1,34 @@
 import React from "react";
-import { Text, View, FlatList, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { Text, View, FlatList, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Product } from "../models/product";
 import { ProductCard } from "../components/ProductCard";
 import { router } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function Index() {
 
   const [isLoading, setLoading] = React.useState(true);
   const [products, setProducts] = React.useState<Product[]>([]);
+  const [searchTerm, setSearchTerm] = React.useState('');
 
-  React.useEffect(() => {
-    fetch("http://10.0.2.2:3002/bp/products")
-      .then((response) => response.json())
-      .then((json) => setProducts(json.data))
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      setLoading(true);
+      fetch("http://10.0.2.2:3002/bp/products")
+        .then((response) => response.json())
+        .then((json) => setProducts(json.data))
+        .catch((error) => console.error(error))
+        .finally(() => setLoading(false));
+    }, [])
+  );
+
+  // React.useEffect(() => {
+  //   fetch("http://10.0.2.2:3002/bp/products")
+  //     .then((response) => response.json())
+  //     .then((json) => setProducts(json.data))
+  //     .catch((error) => console.error(error))
+  //     .finally(() => setLoading(false));
+  // }, []);
 
   function showDetails(item: Product) {
     router.push({
@@ -34,17 +47,17 @@ export default function Index() {
   return (
     <View style={styles.container}>
       {
-        isLoading ? <Text>Loading...</Text> :
+        isLoading ? <ActivityIndicator style={styles.spinner} size="large" color="#324673" /> :
           <View>
             <FlatList
-              data={products}
+              data={products.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()))}
               renderItem={({ item, index }) => (
                 <ProductCard
                   name={item.name}
                   id={item.id}
                   style={
                     index === 0 ? styles.firstCard : {} &&
-                    index === products.length - 1 ? styles.lastCard : {}
+                      index === products.length - 1 ? styles.lastCard : {}
                   }
                   onPress={() => showDetails(item)}
                 />
@@ -53,6 +66,8 @@ export default function Index() {
                 <TextInput
                   style={styles.searchBar}
                   placeholder="Search..."
+                  onChangeText={text => setSearchTerm(text)}
+                  value={searchTerm}
                 />
               }
             ></FlatList>
@@ -110,5 +125,10 @@ const styles = StyleSheet.create({
     padding: 18,
     marginTop: 16,
     backgroundColor: '#ffdd00'
+  },
+  spinner: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });

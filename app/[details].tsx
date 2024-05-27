@@ -1,16 +1,18 @@
 import React from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useLocalSearchParams } from 'expo-router';
 import { router } from 'expo-router';
 import { Product } from "@/models/product";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 export default function Details() {
 
   const prod: Product = useLocalSearchParams() as unknown as Product;
+  const [modalVisible, setModalVisible] = React.useState(false);
 
-  function deleteItem(id: string): void {
-    fetch(`http://10.0.2.2:3002/bp/products/${id}`, { method: 'DELETE' })
-      .then(res => console.log(res))
+  function deleteItem(): void {
+    fetch(`http://10.0.2.2:3002/bp/products/${prod.id}`, { method: 'DELETE' })
+      .then(res => console.log('Data deleted'))
       .catch(error => console.error(error))
       .finally(() => {
         router.navigate('/');
@@ -60,17 +62,23 @@ export default function Details() {
         </View>
       </View>
       <View>
-        <TouchableOpacity onPress={()=>goToEdit()}>
+        <TouchableOpacity onPress={() => goToEdit()}>
           <View style={[styles.button, { backgroundColor: '#e9ecf3' }]}>
             <Text>Editar</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => deleteItem(prod.id)}>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
           <View style={[styles.button, { backgroundColor: '#d50707' }]}>
             <Text style={{ color: 'white' }}>Eliminar</Text>
           </View>
         </TouchableOpacity>
       </View>
+      <ConfirmationModal 
+        visible={modalVisible} 
+        onClose={()=>setModalVisible(false)}
+        name={prod.name}
+        onConfirm={deleteItem}
+      ></ConfirmationModal>
     </View>
   );
 }

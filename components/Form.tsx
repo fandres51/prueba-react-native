@@ -52,7 +52,7 @@ export default function Form(props: any) {
                 }}
             >
                 {({ handleChange, handleBlur, handleSubmit, values, errors, touched, handleReset, setFieldValue }) => (
-                    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+                    <View style={styles.container}>
                         <Text style={styles.label}>ID</Text>
                         <TextInput
                             onChangeText={handleChange('id')}
@@ -152,7 +152,7 @@ export default function Form(props: any) {
                                 setOpen(false);
                             }}
                         />
-                    </ScrollView>
+                    </View>
                 )}
             </Formik>
         </View>
@@ -163,11 +163,6 @@ export default function Form(props: any) {
 const styles = StyleSheet.create({
     container: {
         padding: 16
-    },
-    title: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        marginVertical: 16,
     },
     label: {
         fontSize: 16,

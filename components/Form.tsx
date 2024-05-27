@@ -21,8 +21,7 @@ const validationSchema = Yup.object().shape({
     logo: Yup.string()
         .required('Campo requerido'),
     date_release: Yup.date()
-        .required('Campo requerido')
-        .min(new Date(), 'Fecha no puede ser menor a la actual'),
+        .required('Campo requerido'),
     date_revision: Yup.date()
 
 });

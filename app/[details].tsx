@@ -1,9 +1,9 @@
 import React from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import ConfirmationModal from "@/components/ConfirmationModal";
+import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useLocalSearchParams } from 'expo-router';
 import { router } from 'expo-router';
 import { Product } from "@/models/product";
-import ConfirmationModal from "@/components/ConfirmationModal";
 
 export default function Details() {
 
@@ -50,7 +50,10 @@ export default function Details() {
         </View>
         <View style={styles.dataSegment}>
           <Text>Logo:</Text>
-          <Text style={styles.data}>{prod.logo}</Text>
+          {/* <Text style={styles.data}>{prod.logo}</Text> */}
+        </View>
+        <View style={styles.image}>
+          <Image source={require('../assets/images/visa.png')} style={{ width: 200, height: 100 }} />
         </View>
         <View style={styles.dataSegment}>
           <Text>Fecha de liberación:</Text>
@@ -73,9 +76,9 @@ export default function Details() {
           </View>
         </TouchableOpacity>
       </View>
-      <ConfirmationModal 
-        visible={modalVisible} 
-        onClose={()=>setModalVisible(false)}
+      <ConfirmationModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
         name={prod.name}
         onConfirm={deleteItem}
       ></ConfirmationModal>
@@ -125,4 +128,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 22
   },
+  image: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 32
+  }
 })
